@@ -8,7 +8,9 @@
  * The website encrypts its chapter directory and page list with AES-128-CBC.
  */
 import { ContentRating, type SourceInfo } from "@suwatte/toolchain/types";
-import CryptoJS from "crypto-js";
+import AES from "crypto-js/aes";
+import Utf8 from "crypto-js/enc-utf8";
+import Hex from "crypto-js/enc-hex";
 
 const SITE = "https://www.mangacopy.com";
 const API = "https://api.mangacopy.com/api/v3";
@@ -86,13 +88,13 @@ export function decodePayload(payload: any, key: string): any {
   if (hexCipher.length < 32 || hexCipher.length % 32 !== 0 || !/^[0-9a-f]+$/i.test(hexCipher)) {
     throw new Error("CopyManga encrypted payload format changed");
   }
-  const cipher = CryptoJS.enc.Hex.parse(hexCipher);
-  const decrypted = CryptoJS.AES.decrypt(
+  const cipher = Hex.parse(hexCipher);
+  const decrypted = AES.decrypt(
     { ciphertext: cipher } as any,
-    CryptoJS.enc.Utf8.parse(key),
-    { iv: CryptoJS.enc.Utf8.parse(iv), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 },
+    Utf8.parse(key),
+    { iv: Utf8.parse(iv) },
   );
-  const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+  const plaintext = decrypted.toString(Utf8);
   if (!plaintext) throw new Error("Could not decrypt CopyManga chapter data");
   return JSON.parse(plaintext);
 }
@@ -170,7 +172,7 @@ export default class CopyMangaSource {
   static info: SourceInfo = {
     id: "zh.copymanga",
     name: "拷贝漫画 CopyManga",
-    version: 1.02,
+    version: 1.03,
     website: SITE,
     languages: ["zh-Hans", "zh-Hant"],
     rating: 2 as ContentRating, // mixed-audience catalogue: conservative upper-tier rating
