@@ -31,5 +31,9 @@ jobs:
               sha256sum "$target"
             done
           done
-          cmp /tmp/cdn-sources.json /tmp/raw-sources.json
-          cmp /tmp/cdn-zh.copymanga.stt /tmp/raw-zh.copymanga.stt
+          if ! cmp -s /tmp/cdn-sources.json /tmp/raw-sources.json; then
+            echo "::warning::CDN list differs from raw GitHub; moving branch cache may be stale"
+          fi
+          if ! cmp -s /tmp/cdn-zh.copymanga.stt /tmp/raw-zh.copymanga.stt; then
+            echo "::warning::CDN bundle differs from raw GitHub; moving branch cache may be stale"
+          fi
