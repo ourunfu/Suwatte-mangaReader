@@ -4,10 +4,10 @@ Unofficial experimental Suwatte source for [拷贝漫画 (CopyManga)](https://ww
 
 ## Installation
 
-After a successful GitHub Pages deployment, add the **source list** in Suwatte → Settings → Sources → Manage Sources → Saved Lists:
+Use the public source-list URL below in Suwatte → Settings → Sources → Manage Sources → Saved Lists:
 
 ```text
-https://ourunfu.github.io/Suwatte-mangaReader/sources.json
+https://cdn.jsdelivr.net/gh/ourunfu/Suwatte-mangaReader@gh-pages/sources.json
 ```
 
 Do **not** add this GitHub repository URL or the `.stt` URL directly. The HTTPS catalog must first return JSON with `catalogVersion: 2`. Then install **拷贝漫画 CopyManga** from the list.
@@ -32,13 +32,16 @@ npm run build
 
 The build should produce `dist/sources.json` and `dist/sources/zh.copymanga.stt`.
 
-## GitHub Pages
+## Automatic publishing (no GitHub Pages setup required)
 
-The GitHub Actions workflow at `.github/workflows/deploy-pages.yml` runs on pushes to `main` and publishes the `dist` directory via GitHub Pages. In repository **Settings → Pages → Build and deployment**, choose **GitHub Actions** as the source. Then inspect the **Actions** tab for build/deployment status.
+GitHub Actions compiles the source and pushes the resulting source list and bundle to the `gh-pages` branch. The repository's Pages site itself does **not** need to be enabled to distribute the files via the CDN.
 
-- Repository: https://github.com/ourunfu/Suwatte-mangaReader
-- Expected catalog: https://ourunfu.github.io/Suwatte-mangaReader/sources.json
-- Expected package: https://ourunfu.github.io/Suwatte-mangaReader/sources/zh.copymanga.stt
+- Source branch: https://github.com/ourunfu/Suwatte-mangaReader/tree/gh-pages
+- CDN catalog: https://cdn.jsdelivr.net/gh/ourunfu/Suwatte-mangaReader@gh-pages/sources.json
+- Raw GitHub fallback: https://raw.githubusercontent.com/ourunfu/Suwatte-mangaReader/gh-pages/sources.json
+- Raw GitHub bundle: https://raw.githubusercontent.com/ourunfu/Suwatte-mangaReader/gh-pages/sources/zh.copymanga.stt
+
+The catalog and bundle have been confirmed present in the public `gh-pages` branch. CDN access and iOS installation still require device verification.
 
 ## Important status
 

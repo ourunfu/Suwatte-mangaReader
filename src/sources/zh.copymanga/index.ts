@@ -170,8 +170,7 @@ export default class CopyMangaSource {
   static info: SourceInfo = {
     id: "zh.copymanga",
     name: "拷贝漫画 CopyManga",
-    version: 1.01,
-    minSupportedAppVersion: "7.0.0",
+    version: 1.02,
     website: SITE,
     languages: ["zh-Hans", "zh-Hant"],
     rating: 2 as ContentRating, // mixed-audience catalogue: conservative upper-tier rating
