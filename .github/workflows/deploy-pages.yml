@@ -18,8 +18,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Typecheck and mocked reader tests
         run: |
           npm run check
@@ -27,26 +28,40 @@ jobs:
       - name: Build Suwatte sources
         run: npm run build
       - name: Validate compiled bundle bootstrap
-        run: node --test tests/compiled-bundle.test.cjs
-      - name: Validate generated catalog
-        run: |
-          test -s dist/sources.json
-          test -s dist/sources/zh.copymanga.stt
-          node -e 'const l=require("./dist/sources.json");if(l.catalogVersion!==2||!l.sources.some(x=>x.id==="zh.copymanga"))process.exit(1)'
+        run: npm run test:bundle
+      - uses: actions/upload-artifact@v4
+        with:
+          name: suwatte-catalog
+          path: dist/
+          if-no-files-found: error
       - name: Publish compiled catalog to dedicated gh-pages branch
+        id: publish
+        shell: bash
         run: |
-          mkdir -p /tmp/suwatte-catalog
-          cp -a dist/. /tmp/suwatte-catalog/
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan gh-pages
-          git rm -r -f --ignore-unmatch .
-          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
-          cp -a /tmp/suwatte-catalog/. .
-          touch .nojekyll
-          git add -A
-          git commit -m "Publish compiled Suwatte catalog [skip ci]"
-          git push --force origin HEAD:gh-pages
-      - name: Print source list URL
+          git fetch origin gh-pages --depth=1
+          publish_dir="$RUNNER_TEMP/suwatte-catalog"
+          git worktree add --detach "$publish_dir" FETCH_HEAD
+          git -C "$publish_dir" rm -r --ignore-unmatch .
+          cp -a dist/. "$publish_dir/"
+          touch "$publish_dir/.nojekyll"
+          git -C "$publish_dir" add -A
+          git -C "$publish_dir" commit -m "Publish Suwatte catalog from $GITHUB_SHA [skip ci]"
+          git -C "$publish_dir" push origin HEAD:gh-pages
+          echo "sha=$(git -C "$publish_dir" rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Verify exact published bytes from raw GitHub and CDN
+        env:
+          PUBLISHED_SHA: ${{ steps.publish.outputs.sha }}
         run: |
-          echo "Use https://cdn.jsdelivr.net/gh/ourunfu/Suwatte-mangaReader@gh-pages/sources.json"
+          npm run test:published -- --base "https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$PUBLISHED_SHA" --expected-dir dist
+          npm run test:published -- --base "https://cdn.jsdelivr.net/gh/$GITHUB_REPOSITORY@$PUBLISHED_SHA" --expected-dir dist
+          npm run test:published -- --expected-dir dist
+      - name: Print source list URL
+        env:
+          PUBLISHED_SHA: ${{ steps.publish.outputs.sha }}
+        run: |
+          echo "Saved List: https://raw.githubusercontent.com/$GITHUB_REPOSITORY/gh-pages"
+          echo "Pinned Saved List: https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$PUBLISHED_SHA"
+          echo "Do not append /sources.json to the Saved List address."

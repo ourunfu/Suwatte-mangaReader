@@ -15,7 +15,7 @@ jobs:
           node-version: '22'
       - name: Install and build source
         run: |
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
           npm run build
       - name: Parse with native Apple JavaScriptCore
-        run: swift scripts/check_jsc.swift dist/sources/zh.copymanga.stt
+        run: swift scripts/check_jsc.swift dist

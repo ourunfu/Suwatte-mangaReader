@@ -7,7 +7,9 @@
     "build": "suwatte build",
     "serve": "suwatte serve",
     "check": "tsc --noEmit",
-    "test": "node --test tests/smoke.test.cjs"
+    "test": "node --test tests/smoke.test.cjs tests/install-protocol.test.cjs",
+    "test:bundle": "node --test tests/compiled-bundle.test.cjs",
+    "test:published": "node scripts/verify-published.cjs"
   },
   "suwatte": {
     "listName": "CopyManga for Suwatte (Unofficial)"
@@ -16,7 +18,7 @@
     "crypto-js": "^4.2.0"
   },
   "devDependencies": {
-    "@suwatte/toolchain": "^1.0.0",
+    "@suwatte/toolchain": "1.0.0",
     "@types/crypto-js": "^4.2.2",
     "typescript": "^5.5.4"
   }

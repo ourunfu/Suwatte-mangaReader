@@ -5,14 +5,18 @@ export default class SourceInstallCheck {
   static info: SourceInfo = {
     id: "zh.sourcecheck",
     name: "安装诊断（无网络）",
-    version: 1,
+    version: 1.1,
     website: "https://github.com/ourunfu/Suwatte-mangaReader",
     languages: ["zh-Hans"],
     rating: ContentRating.EVERYONE,
   };
 
-  async getSearchResults(): Promise<any> {
+  async getItemList(): Promise<any> {
     return { items: [], isLastPage: true };
+  }
+
+  async getSearchResults(): Promise<any> {
+    return this.getItemList();
   }
 
   async getContent(): Promise<any> {

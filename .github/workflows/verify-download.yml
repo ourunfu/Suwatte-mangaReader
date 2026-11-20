@@ -1,39 +1,21 @@
 name: Diagnose published Suwatte source download
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+  workflow_run:
+    workflows: [Build and publish Suwatte source list]
+    types: [completed]
 permissions:
   contents: read
 jobs:
   check-download:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect CDN and raw GitHub source list and package
-        shell: bash
-        run: |
-          set -euo pipefail
-          for host in cdn raw; do
-            if [ "$host" = cdn ]; then
-              base="https://cdn.jsdelivr.net/gh/ourunfu/Suwatte-mangaReader@gh-pages"
-            else
-              base="https://raw.githubusercontent.com/ourunfu/Suwatte-mangaReader/gh-pages"
-            fi
-            for path in sources.json sources/zh.copymanga.stt; do
-              target="/tmp/${host}-${path##*/}"
-              printf '\nTesting %s/%s\n' "$base" "$path"
-              curl -L --retry 2 --max-time 25 --silent --show-error \
-                -D /tmp/headers -o "$target" -w 'HTTP %{http_code}; received=%{size_download}B; MIME=%{content_type}; final=%{url_effective}\n' \
-                "$base/$path"
-              sed -n '1,20p' /tmp/headers
-              test -s "$target"
-              head -c 120 "$target"; echo
-              sha256sum "$target"
-            done
-          done
-          if ! cmp -s /tmp/cdn-sources.json /tmp/raw-sources.json; then
-            echo "::warning::CDN list differs from raw GitHub; moving branch cache may be stale"
-          fi
-          if ! cmp -s /tmp/cdn-zh.copymanga.stt /tmp/raw-zh.copymanga.stt; then
-            echo "::warning::CDN bundle differs from raw GitHub; moving branch cache may be stale"
-          fi
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download and bootstrap every catalog-resolved plugin
+        run: npm run test:published
