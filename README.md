@@ -43,6 +43,22 @@ GitHub Actions compiles the source and pushes the resulting source list and bund
 
 The catalog and bundle have been confirmed present in the public `gh-pages` branch. CDN access and iOS installation still require device verification.
 
+
+## Installation troubleshooting (Unexpected EOF)
+
+If Suwatte shows `[SourceInstall] SyntaxError: Unexpected EOF`, first add the source list from **GitHub raw** rather than the CDN to rule out cache and transport differences:
+
+```text
+https://raw.githubusercontent.com/ourunfu/Suwatte-mangaReader/gh-pages/sources.json
+```
+
+The list also includes **安装诊断（无网络）** (`zh.sourcecheck`), a minimal, dependency-free source. Try to install that item before CopyManga:
+
+- If the probe also fails with `Unexpected EOF`, the issue is likely related to the app's bundle download, caching, or installation/runtime compatibility, rather than CopyManga's site parser.
+- If the probe installs but CopyManga still fails, the CopyManga bundle needs further compatibility analysis.
+
+The compiled CopyManga bundle has passed both a Node VM bootstrap test and an Apple JavaScriptCore evaluation/bootstrap test on macOS. This does **not** substitute for testing the actual bytes received on iPhone.
+
 ## Important status
 
 This is an experimental implementation tested against **mock responses**, not confirmed to work with current real CopyManga endpoints or iOS. Site APIs, anti-bot checks, login requirements, image hotlink protection, and encryption may change. A successful build confirms the package format, **not** successful manga reading. Please report relevant errors from Suwatte → Settings → Advanced → Logs.
