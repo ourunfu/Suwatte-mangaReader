@@ -32,6 +32,8 @@ jobs:
           test -s dist/sources/zh.copymanga.stt
           node -e 'const l=require("./dist/sources.json");if(l.catalogVersion!==2||!l.sources.some(x=>x.id==="zh.copymanga"))process.exit(1)'
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
