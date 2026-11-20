@@ -1,6 +1,6 @@
 # CopyManga for Suwatte
 
-Unofficial experimental Suwatte source for [拷贝漫画 (CopyManga)](https://www.mangacopy.com/), using `@suwatte/toolchain` v5.x.
+Unofficial experimental Suwatte source for [拷贝漫画 (CopyManga)](https://www.mangacopy.com/), using published `@suwatte/toolchain` v1.x.
 
 ## Installation
 
