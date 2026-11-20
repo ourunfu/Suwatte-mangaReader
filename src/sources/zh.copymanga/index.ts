@@ -178,7 +178,7 @@ export default class CopyMangaSource {
   };
 
   client = new HttpClient({
-    baseURL: API,
+    baseUrl: API,
     headers: {
       "User-Agent": "COPY/2.3.1", "version": "2.3.1", "platform": "3", "region": "1", "webp": "1",
       "Accept": "application/json",
@@ -187,7 +187,7 @@ export default class CopyMangaSource {
   });
 
   siteClient = new HttpClient({
-    baseURL: SITE,
+    baseUrl: SITE,
     headers: { "User-Agent": UA, "Referer": `${SITE}/` },
     rateLimit: { permits: 2, period: 1 },
   });
