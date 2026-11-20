@@ -7,7 +7,7 @@
     "build": "suwatte build",
     "serve": "suwatte serve",
     "check": "tsc --noEmit",
-    "test": "node --test tests/*.test.cjs"
+    "test": "node --test tests/smoke.test.cjs"
   },
   "suwatte": {
     "listName": "CopyManga for Suwatte (Unofficial)"

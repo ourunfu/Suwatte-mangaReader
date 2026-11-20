@@ -26,6 +26,8 @@ jobs:
           npm test
       - name: Build Suwatte sources
         run: npm run build
+      - name: Validate compiled bundle bootstrap
+        run: node --test tests/compiled-bundle.test.cjs
       - name: Validate generated catalog
         run: |
           test -s dist/sources.json
